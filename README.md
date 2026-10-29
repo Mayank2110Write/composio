@@ -1,45 +1,42 @@
 # OAuth Ready
 
-Look up an app and see what it takes to get your OAuth app ready: the setup steps, your hands-on work, the wait for approval, and what's likely to block you.
+Look up an app and see what it takes to get your OAuth app ready: the steps, your hands-on work, the wait for approval, and what will block you. Apps outside the library are researched live by an AI agent.
 
-This is the **frontend**. It runs on its own with three ready-made guides (GitHub, Google, HubSpot) and a **mock agent** for any other app. The Gemini-powered research agent is the next phase.
+| Folder | What it is |
+| --- | --- |
+| [`Oauth_FE`](Oauth_FE) | Next.js frontend: search, the three-question setup, the plan, step-by-step setup, troubleshooting and sources |
+| [`Oauth_BE`](Oauth_BE) | API and Gemini research agent: serves guides from SQLite and streams live research |
 
-## Run it on your computer
+## Run it locally
 
-You need Node.js 20 or later.
+You need Node.js 20 or later. Use two terminals.
+
+**Backend** (http://localhost:4000)
 
 ```bash
+cd Oauth_BE
 npm install
+cp .env.example .env    # then set GEMINI_API_KEY
 npm run dev
 ```
 
-Open http://localhost:3000.
+**Frontend** (http://localhost:3000)
 
-## What's inside
+```bash
+cd Oauth_FE
+npm install
+echo NEXT_PUBLIC_API_URL=http://localhost:4000 > .env.local
+npm run dev
+```
 
-| Path | What it does |
-| --- | --- |
-| `app/page.jsx` | Home: search and the ready-made guides |
-| `app/guide/[slug]/` | A library guide. The URL holds the user's answers, so every link is shareable |
-| `app/generate/` | Live research for apps outside the library (mock for now) |
-| `components/IntentSheet.jsx` | The three questions that change the verdict |
-| `components/Verdict.jsx` | Difficulty level, time bar, cost and main blocker |
-| `components/Steps.jsx` | Step checklist. Progress is saved in the browser |
-| `lib/guides/*.js` | Guide content for GitHub, Google and HubSpot, with a source on every claim |
-| `lib/scoring.js` | Rules that turn facts into a difficulty level and a confidence rating |
-| `lib/mockAgent.js` | Simulated agent. Replaced by the Gemini backend later |
+Without `NEXT_PUBLIC_API_URL`, the frontend runs on its own in Demo mode, with the library guides and a simulated agent.
 
-## Key decisions
+## Tests
 
-- **Difficulty depends on what you ask for, not just the app.** Google is Self-serve for sign-in and Audited for reading email, so the guide asks three questions first.
-- **Difficulty is calculated by rules, not chosen by the AI.** The agent extracts facts (review needed, install cap); `lib/scoring.js` turns them into Self-serve, Reviewed, Audited or Gated.
-- **Your work and waiting time are shown separately**, always as ranges.
-- **Every claim shows its evidence**: tested, provider docs, community, or unverified. Confidence is set by the weakest source behind the verdict.
-- **Every step says who does it**: the agent, you, waiting on the provider, or your customer.
+```bash
+cd Oauth_FE && npm test     # guide rules and library integrity
+cd Oauth_BE && npm test     # evidence checks and guide assembly
+cd Oauth_BE && npm run eval # live agent vs hand-checked guides (needs a Gemini key)
+```
 
-## Limitations
-
-- Live research is simulated until the backend is added.
-- No step is marked "Tested" yet. After you register a real GitHub or Google test app, change that source's `kind` to `"tested"` in `lib/guides/`.
-- Checklist progress is stored in the browser, so it isn't shared with teammates.
-- Generated guides re-run the agent when their link is opened.
+Key decisions, how the agent checks its evidence, and known limitations are in each folder's README. The latest agent evaluation is in [`Oauth_BE/EVALUATION.md`](Oauth_BE/EVALUATION.md).

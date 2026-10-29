@@ -1,4 +1,6 @@
-import { serve } from "@hono/node-server";
+// The API as a Hono app. Vercel runs this file directly (default export);
+// locally, src/local.ts serves it on a port.
+
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { streamSSE } from "hono/streaming";
@@ -6,10 +8,8 @@ import { AgentError } from "./agent/gemini";
 import { matchesQuery } from "./agent/query";
 import { runAgent } from "./agent/run";
 import { config } from "./config";
-import { finishRun, getGuide, listApps, recentRuns, seedLibrary, startRun } from "./db";
+import { dbReady, finishRun, getGuide, listApps, recentRuns, startRun, storageKind } from "./db";
 import type { GenerateEvent } from "./shared/types";
-
-seedLibrary();
 
 const app = new Hono();
 
@@ -21,25 +21,38 @@ app.use(
   })
 );
 
+app.onError((err, c) => {
+  console.error(err);
+  return c.json({ error: "Server error", detail: String(err.message ?? err).slice(0, 300) }, 500);
+});
+
 app.get("/", (c) => c.json({ name: "OAuth Ready API", endpoints: ["GET /apps", "GET /guides/:slug", "POST /generate", "GET /runs", "GET /health"] }));
 
-app.get("/health", (c) => c.json({ ok: true, model: config.model, agentConfigured: Boolean(config.geminiKey) }));
+app.get("/health", async (c) => {
+  let database = "ok";
+  try {
+    await dbReady();
+  } catch (e) {
+    database = `error: ${String((e as Error).message).slice(0, 200)}`;
+  }
+  return c.json({ ok: database === "ok", model: config.model, agentConfigured: Boolean(config.geminiKey), storage: storageKind, database });
+});
 
-app.get("/apps", (c) => {
+app.get("/apps", async (c) => {
   const q = c.req.query("q") ?? "";
-  const apps = listApps();
+  const apps = await listApps();
   return c.json(q ? apps.filter((a) => matchesQuery(a, q)) : apps);
 });
 
-app.get("/guides/:slug", (c) => {
-  const doc = getGuide(c.req.param("slug"));
+app.get("/guides/:slug", async (c) => {
+  const doc = await getGuide(c.req.param("slug"));
   if (!doc) return c.json({ error: "Not found" }, 404);
   const { updatedAt: _updatedAt, ...guide } = doc;
   return c.json(guide);
 });
 
-// Recent agent runs with their full event log, for checking what the agent did.
-app.get("/runs", (c) => c.json(recentRuns()));
+// Recent agent runs, for checking what the agent did.
+app.get("/runs", async (c) => c.json(await recentRuns()));
 
 app.post("/generate", async (c) => {
   const body = (await c.req.json().catch(() => ({}))) as { query?: string; refresh?: boolean };
@@ -48,7 +61,6 @@ app.post("/generate", async (c) => {
 
   return streamSSE(c, async (stream) => {
     const events: GenerateEvent[] = [];
-    const runId = startRun(query);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 180_000);
     stream.onAbort(() => controller.abort());
@@ -61,9 +73,11 @@ app.post("/generate", async (c) => {
       writes = writes.then(() => stream.writeSSE({ data: JSON.stringify(e) })).catch(() => undefined);
     };
 
+    let runId: number | null = null;
     try {
+      runId = await startRun(query);
       const { slug } = await runAgent(query, emit, { refresh: body.refresh, signal: controller.signal });
-      finishRun(runId, "done", slug, events);
+      await finishRun(runId, "done", slug, events);
     } catch (e) {
       const message =
         e instanceof AgentError
@@ -73,7 +87,7 @@ app.post("/generate", async (c) => {
             : "Something went wrong while researching this app.";
       if (!(e instanceof AgentError)) console.error(e);
       emit({ type: "error", message });
-      finishRun(runId, "failed", null, events, String((e as Error)?.message ?? e));
+      if (runId !== null) await finishRun(runId, "failed", null, events, String((e as Error)?.message ?? e)).catch(() => undefined);
     } finally {
       clearTimeout(timeout);
       await writes;
@@ -81,6 +95,4 @@ app.post("/generate", async (c) => {
   });
 });
 
-serve({ fetch: app.fetch, port: config.port }, (info) => {
-  console.log(`OAuth Ready API on http://localhost:${info.port} · model ${config.model}${config.geminiKey ? "" : " · GEMINI_API_KEY missing"}`);
-});
+export default app;

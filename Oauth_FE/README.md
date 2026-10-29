@@ -21,6 +21,10 @@ npm run typecheck
 npm run build
 ```
 
+### Deploy to Vercel
+
+Import the repository in Vercel with **Root Directory** set to `Oauth_FE` (Next.js is detected automatically), and set `NEXT_PUBLIC_API_URL` to the deployed backend's URL, with no trailing slash. Then set the backend's `CORS_ORIGIN` to this frontend's URL.
+
 ### Connect the backend
 
 Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_API_URL` to the backend's base URL. With it empty, the app runs in **Demo mode** (shown in the top bar).

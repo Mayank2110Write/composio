@@ -8,4 +8,6 @@ export const config = {
   useSearch: process.env.GEMINI_SEARCH !== "0",
   corsOrigins: (process.env.CORS_ORIGIN ?? "*").split(",").map((s) => s.trim()),
   databasePath: process.env.DATABASE_PATH ?? "data/oauth-ready.db",
+  tursoUrl: process.env.TURSO_DATABASE_URL ?? "",
+  tursoToken: process.env.TURSO_AUTH_TOKEN,
 };

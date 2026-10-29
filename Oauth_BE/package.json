@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/local.ts",
+    "start": "tsx src/local.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "sync-shared": "node scripts/sync-shared.mjs",
@@ -14,13 +14,12 @@
   "dependencies": {
     "@google/genai": "^1",
     "@hono/node-server": "^1",
-    "better-sqlite3": "^11",
     "dotenv": "^16",
     "hono": "^4",
-    "tsx": "^4"
+    "tsx": "^4",
+    "@libsql/client": "^0.15"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7",
     "@types/node": "^20",
     "typescript": "^5",
     "vitest": "^3"

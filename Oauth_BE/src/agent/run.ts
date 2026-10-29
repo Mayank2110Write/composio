@@ -77,7 +77,7 @@ export async function runAgent(
   };
 
   // A checked library guide always beats a generated one.
-  const library = opts.evaluate ? undefined : listApps().find((a) => a.origin === "library" && matchesQuery(a, query));
+  const library = opts.evaluate ? undefined : (await listApps()).find((a) => a.origin === "library" && matchesQuery(a, query));
   if (library) {
     await stage("library", `Found a checked guide for ${library.name}`, async () => null);
     emit({ type: "done", slug: library.slug });
@@ -104,7 +104,7 @@ export async function runAgent(
   const domain = registrableDomain(parsed.domain ?? discovery.domain);
   const slug = slugify(name) || parsed.slug;
 
-  const existing = opts.evaluate ? null : getGuide(slug);
+  const existing = opts.evaluate ? null : await getGuide(slug);
   if (existing && !opts.refresh) {
     await stage("cached", `Found a guide we researched on ${existing.updatedAt.slice(0, 10)}`, async () => null);
     emit({ type: "done", slug });
@@ -292,7 +292,7 @@ export async function runAgent(
       (d) => levelRange(d).map((l) => LEVELS[l].label).join(" to ")
     );
 
-    if (!opts.evaluate) saveGuide(doc, query);
+    if (!opts.evaluate) await saveGuide(doc, query);
     emit({ type: "done", slug });
     return { slug, doc, facts };
   } finally {

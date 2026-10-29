@@ -30,7 +30,19 @@ npm run sync-shared      # re-copy guide types, scoring and library guides from 
 | `GEMINI_SEARCH` | `1` to try Google Search grounding first. It's turned off automatically if the key has no search quota. |
 | `COMPOSIO_API_KEY` | Optional. Lets the agent check whether Composio runs a managed app for the toolkit. |
 | `CORS_ORIGIN` | Comma-separated frontend origins, or `*`. |
-| `DATABASE_PATH` | SQLite file. Default `data/oauth-ready.db`. |
+| `DATABASE_PATH` | Local SQLite file, used when no Turso URL is set. Default `data/oauth-ready.db`. |
+| `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | Hosted libSQL database ([Turso](https://turso.tech)). Required in production so generated guides persist. |
+
+## Deploy to Vercel
+
+`src/server.ts` exports the Hono app, which Vercel runs as a function. `src/local.ts` serves the same app on a port for local development.
+
+1. Create a database at [turso.tech](https://turso.tech) and copy its URL and an auth token.
+2. In Vercel, import the repository with **Root Directory** set to `Oauth_BE`.
+3. Add environment variables: `GEMINI_API_KEY`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, and `CORS_ORIGIN` (your frontend's URL, or `*` to start).
+4. Deploy, then open `/health`. It should show `"ok": true` and `"storage": "turso"`.
+
+Live research streams for about a minute. That's within Vercel's default function duration.
 
 ## API
 
@@ -40,7 +52,7 @@ npm run sync-shared      # re-copy guide types, scoring and library guides from 
 | GET | `/guides/:slug` | A `GuideDoc`, or 404 |
 | POST | `/generate` with `{ "query": "zoom.us", "refresh": false }` | Server-sent events: `stage`, `source`, `fact`, then `done` (with the slug) or `error` |
 | GET | `/runs` | Recent agent runs, for checking what happened |
-| GET | `/health` | Status, model, whether a key is set |
+| GET | `/health` | Status, model, whether a key is set, storage type, and whether the database is reachable |
 
 Types are in `src/shared/types.ts`, copied from the frontend so both sides agree.
 
@@ -90,4 +102,4 @@ Quote checking caught real problems. In one Slack run, 4 of 10 extracted facts c
 - Guides are only as good as the pages the agent can open. Docs that need JavaScript to render come back nearly empty and are dropped.
 - Nothing in a generated guide is Tested. Time estimates often come from the writer rather than a stated fact, and are listed as unknowns when the docs don't give one.
 - Without `COMPOSIO_API_KEY`, the managed-app answer is always "unconfirmed".
-- One server process, and SQLite on local disk. Deploy where the disk persists (for example Render or Fly with a volume), not on serverless functions.
+- On Vercel without Turso, storage falls back to a temporary file: library guides work, but generated guides disappear when the function restarts. `/health` reports `"storage": "temporary"` in that case.

@@ -2,9 +2,9 @@
 // conditions on each item and every source label are decided here, not by
 // the model.
 
-import type { Blocker, Choice, Cited, Conditional, Field, GuideDoc, Phase, Source, Step, When } from "../shared/types";
-import type { Written } from "./prompts";
-import { slugify } from "./query";
+import type { Blocker, Choice, Cited, Conditional, Field, GuideDoc, Phase, Source, Step, When } from "../shared/types.js";
+import type { Written } from "./prompts.js";
+import { slugify } from "./query.js";
 
 export type VerifiedFact = {
   id: string; // F1, F2...

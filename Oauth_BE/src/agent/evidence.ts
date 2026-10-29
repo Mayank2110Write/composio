@@ -1,8 +1,8 @@
 // Code, not the model, decides how strong each source is and whether a fact is
 // actually supported by the page it cites.
 
-import type { EvidenceKind } from "../shared/types";
-import { brandLabel, registrableDomain } from "./query";
+import type { EvidenceKind } from "../shared/types.js";
+import { brandLabel, registrableDomain } from "./query.js";
 
 // Provider docs: the provider's own domain, or a docs host carrying its brand
 // (e.g. airtable.readme.io). Composio's own docs count for the managed-app

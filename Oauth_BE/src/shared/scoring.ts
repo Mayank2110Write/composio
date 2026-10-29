@@ -2,7 +2,7 @@
 // chosen by the language model. That keeps every verdict explainable and
 // consistent between library guides and generated ones.
 
-import type { Confidence, EvidenceKind, Facts, Level, Owner, Source } from "./types";
+import type { Confidence, EvidenceKind, Facts, Level, Owner, Source } from "./types.js";
 
 export const LEVELS: Record<Level, { label: string; plain: string; meaning: string; rank: number }> = {
   selfserve: {

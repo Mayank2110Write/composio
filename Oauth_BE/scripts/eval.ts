@@ -3,12 +3,12 @@
 // Writes the results to EVALUATION.md.
 
 import { writeFileSync } from "node:fs";
-import { runAgent } from "../src/agent/run";
-import { LIBRARY } from "../src/shared/guides";
-import { WHO } from "../src/shared/intent";
-import { computeFacts, levelRange } from "../src/shared/resolve";
-import { LEVELS, levelFor } from "../src/shared/scoring";
-import type { GuideDoc, Level } from "../src/shared/types";
+import { runAgent } from "../src/agent/run.js";
+import { LIBRARY } from "../src/shared/guides/index.js";
+import { WHO } from "../src/shared/intent.js";
+import { computeFacts, levelRange } from "../src/shared/resolve.js";
+import { LEVELS, levelFor } from "../src/shared/scoring.js";
+import type { GuideDoc, Level } from "../src/shared/types.js";
 
 const slugs = process.argv.slice(2).length ? process.argv.slice(2) : ["github", "hubspot", "notion", "slack"];
 

@@ -1,4 +1,4 @@
-import type { GuideDoc, When } from "../types";
+import type { GuideDoc, When } from "../types.js";
 
 const SENSITIVE: When = { does: ["calendar", "send"], who: ["few", "public"] };
 const RESTRICTED: When = { does: ["read", "drive"], who: ["few", "public"] };

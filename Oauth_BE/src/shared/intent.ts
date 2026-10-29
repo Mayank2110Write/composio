@@ -1,4 +1,4 @@
-import type { Brand, DoesOption, Intent, Who } from "./types";
+import type { Brand, DoesOption, Intent, Who } from "./types.js";
 
 export const WHO: { id: Who; label: string; hint: string }[] = [
   { id: "team", label: "Just my team", hint: "People inside your own company" },

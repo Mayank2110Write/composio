@@ -1,9 +1,9 @@
 // Runs the API on a local port. On Vercel, src/server.ts is used directly.
 
 import { serve } from "@hono/node-server";
-import { config } from "./config";
-import { storageKind } from "./db";
-import app from "./server";
+import { config } from "./config.js";
+import { storageKind } from "./db.js";
+import app from "./server.js";
 
 serve({ fetch: app.fetch, port: config.port }, (info) => {
   console.log(

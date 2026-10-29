@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { WHO } from "../shared/intent";
-import { levelRange, resolveGuide } from "../shared/resolve";
-import type { Source } from "../shared/types";
-import { assembleGuide, isGrowthCap, type VerifiedFact } from "./assemble";
-import { labelSource, quoteFound } from "./evidence";
-import { htmlToText } from "./fetchPage";
-import type { Written } from "./prompts";
-import { parseQuery } from "./query";
-import { writtenProblems } from "./quality";
+import { WHO } from "../shared/intent.js";
+import { levelRange, resolveGuide } from "../shared/resolve.js";
+import type { Source } from "../shared/types.js";
+import { assembleGuide, isGrowthCap, type VerifiedFact } from "./assemble.js";
+import { labelSource, quoteFound } from "./evidence.js";
+import { htmlToText } from "./fetchPage.js";
+import type { Written } from "./prompts.js";
+import { parseQuery } from "./query.js";
+import { writtenProblems } from "./quality.js";
 
 describe("labelling sources by domain", () => {
   it("treats the provider's own hosts as provider docs", () => {

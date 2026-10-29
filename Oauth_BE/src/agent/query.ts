@@ -1,4 +1,4 @@
-import type { AppSummary } from "../shared/types";
+import type { AppSummary } from "../shared/types.js";
 
 // Turns "airtable", "Airtable" or "https://www.airtable.com/pricing" into a
 // name, a domain guess and a slug.

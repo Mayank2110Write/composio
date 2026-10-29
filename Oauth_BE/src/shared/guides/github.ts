@@ -1,4 +1,4 @@
-import type { GuideDoc } from "../types";
+import type { GuideDoc } from "../types.js";
 
 export const github: GuideDoc = {
   slug: "github",

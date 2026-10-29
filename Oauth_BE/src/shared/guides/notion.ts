@@ -1,4 +1,4 @@
-import type { GuideDoc } from "../types";
+import type { GuideDoc } from "../types.js";
 
 const OUTSIDE = { who: ["few" as const, "public" as const] };
 

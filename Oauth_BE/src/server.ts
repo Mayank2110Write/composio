@@ -4,12 +4,12 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { streamSSE } from "hono/streaming";
-import { AgentError } from "./agent/gemini";
-import { matchesQuery } from "./agent/query";
-import { runAgent } from "./agent/run";
-import { config } from "./config";
-import { dbReady, finishRun, getGuide, listApps, recentRuns, startRun, storageKind } from "./db";
-import type { GenerateEvent } from "./shared/types";
+import { AgentError } from "./agent/gemini.js";
+import { matchesQuery } from "./agent/query.js";
+import { runAgent } from "./agent/run.js";
+import { config } from "./config.js";
+import { dbReady, finishRun, getGuide, listApps, recentRuns, startRun, storageKind } from "./db.js";
+import type { GenerateEvent } from "./shared/types.js";
 
 const app = new Hono();
 

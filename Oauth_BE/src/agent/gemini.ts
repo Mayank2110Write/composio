@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { config } from "../config";
+import { config } from "../config.js";
 
 let client: GoogleGenAI | null = null;
 function ai(): GoogleGenAI {

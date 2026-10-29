@@ -7,10 +7,10 @@ import { createClient, type Client } from "@libsql/client";
 import { mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { config } from "./config";
-import { LIBRARY } from "./shared/guides";
-import { summarize } from "./shared/resolve";
-import type { AppSummary, GenerateEvent, GuideDoc } from "./shared/types";
+import { config } from "./config.js";
+import { LIBRARY } from "./shared/guides/index.js";
+import { summarize } from "./shared/resolve.js";
+import type { AppSummary, GenerateEvent, GuideDoc } from "./shared/types.js";
 
 export type StorageKind = "turso" | "local-file" | "temporary";
 

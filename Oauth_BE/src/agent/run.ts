@@ -2,15 +2,15 @@
 // writes; code opens every link, checks every quote, labels every source and
 // scores the result. Progress streams to the browser as GenerateEvents.
 
-import { getGuide, listApps, saveGuide } from "../db";
-import { levelRange } from "../shared/resolve";
-import { LEVELS } from "../shared/scoring";
-import type { GenerateEvent, GuideDoc, Source } from "../shared/types";
-import { assembleGuide, type VerifiedFact } from "./assemble";
-import { COMPOSIO_SOURCE, managedApp } from "./composio";
-import { labelSource, quoteFound } from "./evidence";
-import { fetchPage, type Page } from "./fetchPage";
-import { AgentError, generateJson, searchEnabled, searchForUrls } from "./gemini";
+import { getGuide, listApps, saveGuide } from "../db.js";
+import { levelRange } from "../shared/resolve.js";
+import { LEVELS } from "../shared/scoring.js";
+import type { GenerateEvent, GuideDoc, Source } from "../shared/types.js";
+import { assembleGuide, type VerifiedFact } from "./assemble.js";
+import { COMPOSIO_SOURCE, managedApp } from "./composio.js";
+import { labelSource, quoteFound } from "./evidence.js";
+import { fetchPage, type Page } from "./fetchPage.js";
+import { AgentError, generateJson, searchEnabled, searchForUrls } from "./gemini.js";
 import {
   DISCOVER_SCHEMA,
   DISCOVER_SYSTEM,
@@ -21,9 +21,9 @@ import {
   type Discovery,
   type ExtractedFact,
   type Written,
-} from "./prompts";
-import { writtenProblems } from "./quality";
-import { matchesQuery, parseQuery, registrableDomain, slugify } from "./query";
+} from "./prompts.js";
+import { writtenProblems } from "./quality.js";
+import { matchesQuery, parseQuery, registrableDomain, slugify } from "./query.js";
 
 const RELEVANT = /oauth|authori[sz]|scope|permission|review|verif|marketplace|listing|publish|distribut|rate.?limit|app.?(store|directory|gallery)|consent|redirect|install|security|token/i;
 const MAX_PAGES = 14;

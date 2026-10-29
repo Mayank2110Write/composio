@@ -2,7 +2,7 @@
 // read. Pure and deterministic: the backend runs the same function when it
 // saves a generated guide.
 
-import { confidenceFor, levelFor, levelReasons } from "./scoring";
+import { confidenceFor, levelFor, levelReasons } from "./scoring.js";
 import type {
   AppSummary,
   Conditional,
@@ -13,8 +13,8 @@ import type {
   ResolvedGuide,
   Variants,
   When,
-} from "./types";
-import { BRAND, WHO } from "./intent";
+} from "./types.js";
+import { BRAND, WHO } from "./intent.js";
 
 export const COMPOSIO_CALLBACK = "https://backend.composio.dev/api/v3/toolkits/auth/callback";
 

@@ -1,4 +1,4 @@
-import type { Written } from "./prompts";
+import type { Written } from "./prompts.js";
 
 // Checks a draft is complete enough to follow. Returned as feedback to the writer.
 export function writtenProblems(w: Written): string[] {

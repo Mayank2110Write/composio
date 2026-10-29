@@ -7,7 +7,7 @@ export const github: GuideDoc = {
   category: "Developer tools",
   tagline: "Quick to register. The friction is inside your customers' organizations.",
   origin: "library",
-  lastVerified: "28 Oct 2026",
+  lastVerified: "29 Oct 2026",
   does: [
     {
       id: "read",
@@ -43,7 +43,7 @@ export const github: GuideDoc = {
       },
     },
   ],
-  keySources: [{ value: ["gh-org-approve", "gh-tokens", "gh-diff"] }],
+  keySources: [{ value: ["gh-org-approve", "gh-tested", "gh-diff"] }],
   choices: [
     {
       title: "OAuth App or GitHub App",
@@ -84,7 +84,7 @@ export const github: GuideDoc = {
           detail:
             "For an organization, go to the organization's Settings, then Developer settings, then OAuth Apps. The link below opens the form for your personal account.",
           link: { label: "Open GitHub's form", url: "https://github.com/settings/applications/new" },
-          src: "cmp-github",
+          src: "gh-tested",
         },
         {
           who: "you",
@@ -95,10 +95,11 @@ export const github: GuideDoc = {
           fields: [
             { label: "Application name", value: "Your product's name", example: true },
             { label: "Homepage URL", value: "https://yourproduct.com", example: true },
-            { label: "Authorization callback URL", value: "{{callback}}", copy: true },
+            { label: "Redirect URI", value: "{{callback}}", copy: true },
           ],
-          check: "Use the exact callback URL your Composio auth config shows. Older guides show a v1 URL that no longer applies.",
-          src: "cmp-github",
+          check:
+            "The form calls this field Redirect URI (older guides say Authorization callback URL). GitHub only redirects to the exact URI you register, so use the one your Composio auth config shows. Older guides show a v1 URL that no longer applies.",
+          src: "gh-tested",
         },
       ],
     },
@@ -118,6 +119,8 @@ export const github: GuideDoc = {
           title: "Create a GitHub auth config in Composio",
           time: "5 min",
           detail: "Choose OAuth2, turn on your own developer credentials, paste the client ID and secret, and request only: {{scopes}}.",
+          check:
+            "Auth configs live in Composio's developer platform, not the Apps screen. Adding GitHub from the Apps screen connects through Composio's managed app instead of yours.",
           link: { label: "Open Composio auth configs", url: "https://dashboard.composio.dev" },
           src: "cmp-github",
         },
@@ -162,6 +165,18 @@ export const github: GuideDoc = {
   approval: [{ value: null }],
   blockers: [
     {
+      symptom: "Connections stop working about 8 hours after a user connects.",
+      cause: "Access tokens for this OAuth app expired after 8 hours (expires_in: 28800). The token response also included a refresh token valid for about 6 months.",
+      fix: "Store the refresh token and exchange it for a new access token before the 8 hours are up. Composio handles this if it manages the connection.",
+      src: "gh-tested",
+    },
+    {
+      symptom: "Token exchange fails with bad_verification_code.",
+      cause: "The authorization code expired. A code used about 10 minutes after it was issued was rejected.",
+      fix: "Exchange the code for a token immediately after the redirect. If it expired, send the user through authorization again.",
+      src: "gh-tested",
+    },
+    {
       symptom: "A user connected, but the agent can't see their organization's repositories.",
       cause: "The organization restricts OAuth app access, and no owner has approved your app.",
       fix: "Send the customer the approval steps. Owners approve under Settings, then Third-party access, then OAuth app policy.",
@@ -198,10 +213,17 @@ export const github: GuideDoc = {
   ],
   unknowns: [
     {
-      text: "Some third-party guides say OAuth app tokens expire after eight hours. GitHub's documentation says that applies to GitHub App user tokens, not OAuth app tokens, so this guide follows GitHub.",
+      text: "An earlier version of this guide said OAuth App tokens don't expire on a timer. Our test app (registered 29 Oct 2026 with default settings) received 8-hour tokens and a 6-month refresh token, so the guide now says they expire. We haven't confirmed whether older OAuth apps or a setting change this.",
+    },
+    {
+      text: "Not tested: creating a Composio auth config with your own client ID and secret. The Composio screen we reached only offered Composio's managed GitHub app.",
+    },
+    {
+      text: "Not tested: organization approval. The test used a personal account, so the org-approval blocker rests on GitHub's docs.",
     },
   ],
   sources: [
+    { id: "gh-tested", kind: "tested", publisher: "OAuth Ready setup attempt", title: "Registered an OAuth App, authorized it, exchanged the code and called /user (29 Oct 2026)", url: "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps", checkedAt: "29 Oct 2026" },
     { id: "gh-org-approve", kind: "official", publisher: "GitHub Docs", title: "Approving OAuth apps for your organization", url: "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization" },
     { id: "gh-org-limits", kind: "official", publisher: "GitHub Docs", title: "Limiting OAuth app and GitHub App access requests", url: "https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests-and-installations" },
     { id: "gh-tokens", kind: "official", publisher: "GitHub Docs", title: "Token expiration and revocation", url: "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/token-expiration-and-revocation" },
@@ -210,5 +232,11 @@ export const github: GuideDoc = {
     { id: "cmp-managed", kind: "official", publisher: "Composio Docs", title: "Managed vs custom auth", url: "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app" },
     { id: "unified-gh", kind: "community", publisher: "Unified.to", title: "GitHub OAuth app setup notes", url: "https://docs.unified.to/skills/github-oauth-app/SKILL.md" },
   ],
-  changelog: [{ date: "28 Oct 2026", text: "Guide created. Callback URL updated to Composio's v3 endpoint." }],
+  changelog: [
+    { date: "28 Oct 2026", text: "Guide created. Callback URL updated to Composio's v3 endpoint." },
+    {
+      date: "29 Oct 2026",
+      text: "Tested by registering a real OAuth App. Corrected token expiry (8 hours, with a refresh token), renamed the field to Redirect URI, and added the code-expiry blocker.",
+    },
+  ],
 };

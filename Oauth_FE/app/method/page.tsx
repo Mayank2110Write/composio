@@ -90,9 +90,15 @@ export default function Method() {
         maximum client secret lifetime.
       </p>
       <p>
-        No step is marked Tested yet. Corrections made during research: Composio&apos;s GitHub guide shows an outdated
-        callback URL; HubSpot guides from before mid-2026 describe a creation flow that no longer exists; a third-party
-        claim that GitHub OAuth tokens expire in eight hours applies only to GitHub Apps.
+        GitHub was tested for real on 29 Oct 2026: we registered an OAuth App, authorized it, exchanged the code for a
+        token and called the API. That changed the guide in three places. Access tokens expired after 8 hours, with a
+        6-month refresh token, which reversed an earlier &ldquo;correction&rdquo; saying OAuth App tokens don&apos;t
+        expire. The form&apos;s field is called Redirect URI. And a code used about 10 minutes late was rejected. We
+        couldn&apos;t test the Composio auth-config step or organization approval; the guide says so.
+      </p>
+      <p>
+        Other corrections made during research: Composio&apos;s GitHub guide shows an outdated callback URL, and HubSpot
+        guides from before mid-2026 describe a creation flow that no longer exists.
       </p>
 
       <p style={{ marginTop: 28 }}>

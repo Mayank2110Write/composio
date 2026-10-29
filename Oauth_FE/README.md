@@ -92,7 +92,12 @@ All types are in [lib/types.ts](lib/types.ts).
 
 - All 56 source and console links in the library were requested on 29 Oct 2026. All resolved except three HubSpot Community threads, which block automated requests, and the Entra admin console, which needs a sign-in.
 - Key claims were read on the provider's page: Slack's non-Marketplace rate limits (1 request per minute, up to 15 objects; existing installs and internal apps unaffected) and Microsoft's client secret lifetime (24 months maximum, under 12 recommended).
-- No step is marked Tested yet. To mark one, register a real test app and change that source's `kind` to `"tested"`.
+- **Setup attempt, GitHub (29 Oct 2026).** Registered a real OAuth App, opened the consent screen, exchanged the code for a token and called `/user`. Those steps are marked **Tested**. What it changed:
+  - **Corrected:** access tokens expired after **8 hours** (`expires_in: 28800`) and came with a refresh token valid for about 6 months. The guide had said OAuth App tokens don't expire on a timer. It now has a blocker and fix for this.
+  - **Corrected:** the form's field is called **Redirect URI**, not "Authorization callback URL".
+  - **Added:** a code used about 10 minutes after it was issued was rejected with `bad_verification_code`. The redirect also carried an `iss` (issuer) parameter.
+  - **Couldn't test:** creating a Composio auth config with your own credentials (the Composio screen reached only offered its managed GitHub app), and organization approval (a personal account was used).
+- Other guides aren't tested. To mark a step Tested, do it for real and point its `src` at a source with `kind: "tested"`.
 - Slack, Microsoft 365 and Notion were drafted from provider docs and are less reviewed than GitHub, Google and HubSpot. Whether Composio runs a managed app for Slack, HubSpot, Microsoft and Notion is marked as unconfirmed.
 
 ## Limitations
